@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="在上一篇Java学习笔记中给大家介绍了Stream，在Stream的操作方法中的参数都是Functional Interface（本文接下来简称FI）的实例, 所以要想用好Stream，就要弄懂FI。 What关于FI，官方只给出了描述性的定义，即只包含一个抽象方法的接口即为函数式接口。这里呢，官方文档上，有一条额外的说明，原话如下：  If an interface declares an ab">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Java 8 学习笔记 (2)】 Functional Interface">
+<meta property="og:url" content="https://missingeverytime.github.io/2016/08/16/functional_interface/index.html">
+<meta property="og:site_name" content="Steven Li&#39;s Blog">
+<meta property="og:description" content="在上一篇Java学习笔记中给大家介绍了Stream，在Stream的操作方法中的参数都是Functional Interface（本文接下来简称FI）的实例, 所以要想用好Stream，就要弄懂FI。 What关于FI，官方只给出了描述性的定义，即只包含一个抽象方法的接口即为函数式接口。这里呢，官方文档上，有一条额外的说明，原话如下：  If an interface declares an ab">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-08-02T03:47:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Java 8 学习笔记 (2)】 Functional Interface">
+<meta name="twitter:description" content="在上一篇Java学习笔记中给大家介绍了Stream，在Stream的操作方法中的参数都是Functional Interface（本文接下来简称FI）的实例, 所以要想用好Stream，就要弄懂FI。 What关于FI，官方只给出了描述性的定义，即只包含一个抽象方法的接口即为函数式接口。这里呢，官方文档上，有一条额外的说明，原话如下：  If an interface declares an ab">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://missingeverytime.github.io/2016/08/16/functional_interface/"/>
+
+
+
+
+
+  <title>【Java 8 学习笔记 (2)】 Functional Interface | Steven Li's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Steven Li's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">李高健的博客</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://missingeverytime.github.io/2016/08/16/functional_interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Steven Li's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【Java 8 学习笔记 (2)】 Functional Interface</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-16T13:41:36+08:00">
+                2016-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Technology/" itemprop="url" rel="index">
+                    <span itemprop="name">Technology</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在<a href="https://missingeverytime.github.io/2016/08/15/stream-blog/">上一篇</a>Java学习笔记中给大家介绍了Stream，在Stream的操作方法中的参数都是Functional Interface（本文接下来简称FI）的实例, 所以要想用好Stream，就要弄懂FI。</p>
+<h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>关于FI，官方只给出了描述性的定义，即只包含一个抽象方法的接口即为函数式接口。这里呢，官方文档上，有一条额外的说明，原话如下：</p>
+<blockquote>
+<p>If an interface declares an abstract method overriding one of the public methods of java.lang.Object, that also does not count toward the interface’s abstract method count since any implementation of the interface will have an implementation from java.lang.Object or elsewhere.</p>
+<p>翻译过来大致的意思就是，FI中可以声明额外的抽象方法，但是其方法签名必须和java.lang.Object的public方法一致，因为这类任何接口都会存在一个来自java.lang.Object或者其他地方的实现（并不能称得上真正的抽象），所以这一类方法并不计入FI接口的抽象方法的个数。</p>
+</blockquote>
+<p>当然大家可以将FI理解为接口中的一种特例。Java 8 提供了@FunctionalInterface 这个注解来方便我们定义函数式接口。比如我们常见的<code>Runnable</code>接口，就是一个函数式接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@FunctionalInterface</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line">	<span class="comment">//...</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>In Java 8, FI的实例可以通过<strong>lambda表达式，方法引用（Method Reference）, 构造方法引用（Constructor Reference）</strong>三种方式来创建。本文将重点介绍一下lambda表达式，至于Method References，大家可以参考<a href="https://blog.idrsolutions.com/2015/02/java-8-method-references-explained-5-minutes/" target="_blank" rel="external">这篇文章</a>.</p>
+<p>就拿上面提到的<code>Runnable</code>接口为例。在Java 7 or lower，我们可能要这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Java 7 or lower</span></div><div class="line">Runnable task1 = <span class="keyword">new</span> Runnable()</div><div class="line">  &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line"><span class="function">    </span>&#123;</div><div class="line">      System.out.println(<span class="string">"Task 1 is running..."</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">  Thread thread1 = <span class="keyword">new</span> Thread(task1);</div><div class="line">  thread1.start();</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Java 8</span></div><div class="line">Runnable task1 = () -&gt; System.out.println(<span class="string">"Task 1 is running..."</span>);</div><div class="line">Thread thread1 = <span class="keyword">new</span> Thread(task1);</div><div class="line">thread1.start();</div></pre></td></tr></table></figure>
+<p>从上面的两段代码，我们不难发现在Java8中，可以使用lambda表达式（或者方法引用，及构造方法引用）来替代之前Java版本中的匿名内部类。正是由于FI只有一个抽象方法，所以<code>() -&gt; System.out.println(&quot;Task 1 is running...&quot;);</code>理所当然就指向了该抽象方法的实现。</p>
+<h3 id="lambda-表达式"><a href="#lambda-表达式" class="headerlink" title="lambda 表达式"></a>lambda 表达式</h3><p>lambda表达式的语法:</p>
+<p><code>(args1, args2, args3, ……) -&gt; { body }</code></p>
+<p>表达式可分为参数集合与函数体2部分。参数集合可接受0个或多个参数，例如，<code>() -&gt; { some codes }</code>,<code>(int a) -&gt; { some codes }</code>, <code>(int a, int b, int c) -&gt; { some codes }</code>, 如果参数集合只有一个参数，其<code>()</code>可以省略；此外，由于FI接口在定义时，已经对其参数类型做过限制，因此参数类型亦可省略。<br>对于，函数体部分如果只有一行代码，最外层的<code>{ }</code>可以省略。</p>
+<h3 id="Java-8-内置常见的FI"><a href="#Java-8-内置常见的FI" class="headerlink" title="Java 8 内置常见的FI"></a>Java 8 内置常见的FI</h3><p>Java 8 也提供了几种常见的FI，接下来结合Stream中的一些方法，给大家做个简单的介绍：</p>
+<h4 id="Function"><a href="#Function" class="headerlink" title="Function"></a>Function<t, r=""></t,></h4><p>Function接口表示：接受一个参数T，经过操作之后返回一个结果R。例如Stream中的<code>map()</code>方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">Returns a stream consisting of the results of applying the given function to the elements of this stream.</span></div><div class="line"><span class="comment">	map(Function&lt;? super T,? extends R&gt; mapper)</span></div><div class="line"><span class="comment">*/</span></div><div class="line"><span class="comment">//Example: 从Stream&lt;Person&gt;流中找出每个girl的微信号,并返回Stream&lt;String&gt;</span></div><div class="line">Stream&lt;String&gt; weChatStream = girls.map( girl -&gt; girl.getWechat() );</div></pre></td></tr></table></figure>
+<h4 id="Predicate"><a href="#Predicate" class="headerlink" title="Predicate"></a>Predicate<t></t></h4><p>Predicate用来判断一个对象T是否满足某种条件，返回boolean值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">Returns a stream consisting of the elements of this stream that match the given predicate.</span></div><div class="line"><span class="comment">	filter(Predicate&lt;? super T&gt; predicate)</span></div><div class="line"><span class="comment">*/</span></div><div class="line"><span class="comment">//Example: 从Stream&lt;Person&gt;流中找出所有女生</span></div><div class="line">Stream&lt;Person&gt; grils = persons.filter( p -&gt; p.getGender() == Gender.FEMALE )</div></pre></td></tr></table></figure>
+<h4 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer<t></t></h4><p>Consumer表示对一个传入对象T进行操作，但并无返回值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">Performs an action for each element of this stream.</span></div><div class="line"><span class="comment">	forEach(Consumer&lt;? super T&gt; action)</span></div><div class="line"><span class="comment">*/</span></div><div class="line"><span class="comment">//Example: 打印每个女生的微信号</span></div><div class="line">grils.forEach( (girl) -&gt; System.out.println( girl.getWeChat()) );</div></pre></td></tr></table></figure>
+<h4 id="Supplier"><a href="#Supplier" class="headerlink" title="Supplier"></a>Supplier<t></t></h4><p>Supplier表示返回一个T类型的数据对象.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">Returns an infinite sequential unordered stream where each element is generated by the provided Supplier.</span></div><div class="line"><span class="comment">	generate(Supplier&lt;T&gt; s)</span></div><div class="line"><span class="comment">*/</span></div><div class="line"><span class="comment">//Example: 生成一个无限的随机数流</span></div><div class="line">Stream.generate( () -&gt; Math.random() );</div></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>通过本文，大家可以发现，为了支持函数式编程，Java“不计代价”的引入了<code>Functional Interface</code>,<code>Default Method</code>,<code>Method Reference</code>等一些全新的概念，可谓用心良苦。这两篇文章的目的也就在于给大家做一个概述，要想深入了解还需要在实际应用中慢慢摸索。本文如有不当之处，欢迎大家批评指正。</p>
+<blockquote>
+<p>路漫漫其修远兮，吾将上下而求索。。。</p>
+</blockquote>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html" target="_blank" rel="external">The Java™ Tutorials - Lambda Expressions</a></li>
+<li><a href="http://blog.csdn.net/zxhoo/article/details/38349011" target="_blank" rel="external">Java8学习笔记（1） – 从函数式接口说起</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/api/index.html" target="_blank" rel="external">JDK 8 Doc</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/15/stream-blog/" rel="next" title="【Java 8 学习笔记 (1)】 Stream">
+                <i class="fa fa-chevron-left"></i> 【Java 8 学习笔记 (1)】 Stream
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/22/基于CentOS-6-搭建-NextCloud-网盘/" rel="prev" title="基于CentOS 6 搭建 NextCloud 网盘">
+                基于CentOS 6 搭建 NextCloud 网盘 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Steven Li" />
+          <p class="site-author-name" itemprop="name">Steven Li</p>
+           
+              <p class="site-description motion-element" itemprop="description">a not bad person</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What"><span class="nav-number">1.</span> <span class="nav-text">What</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How"><span class="nav-number">2.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lambda-表达式"><span class="nav-number">2.1.</span> <span class="nav-text">lambda 表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-8-内置常见的FI"><span class="nav-number">2.2.</span> <span class="nav-text">Java 8 内置常见的FI</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Function"><span class="nav-number">2.2.1.</span> <span class="nav-text">Function</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Predicate"><span class="nav-number">2.2.2.</span> <span class="nav-text">Predicate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Consumer"><span class="nav-number">2.2.3.</span> <span class="nav-text">Consumer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Supplier"><span class="nav-number">2.2.4.</span> <span class="nav-text">Supplier</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Li</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

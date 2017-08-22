@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Technology,Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="NextCoud 是一款开源（免费）软件，属于 OwnCloud的一个分支。NextCloud是基于PHP及Javascript开发，支持 MySQL/MariaDB, PostgreSQL, Oracle, SQLite等主流数据库。 与此同时，NextCloud提供了桌面版（Windows，Mac， Linux），手机版（IOS，Android）应用，极大了方便了用户的使用。 本文将主要介绍">
+<meta name="keywords" content="Technology,Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于CentOS 6 搭建 NextCloud 网盘">
+<meta property="og:url" content="https://missingeverytime.github.io/2017/08/22/基于CentOS-6-搭建-NextCloud-网盘/index.html">
+<meta property="og:site_name" content="Steven Li&#39;s Blog">
+<meta property="og:description" content="NextCoud 是一款开源（免费）软件，属于 OwnCloud的一个分支。NextCloud是基于PHP及Javascript开发，支持 MySQL/MariaDB, PostgreSQL, Oracle, SQLite等主流数据库。 与此同时，NextCloud提供了桌面版（Windows，Mac， Linux），手机版（IOS，Android）应用，极大了方便了用户的使用。 本文将主要介绍">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://i1.bvimg.com/607816/a0080e4ca0a7af3b.png">
+<meta property="og:image" content="http://i1.bvimg.com/607816/f83162a260988362.png">
+<meta property="og:image" content="http://i1.bvimg.com/607816/e37713755b4bde3e.png">
+<meta property="og:image" content="http://i1.bvimg.com/607816/c0174645fdb8e9ad.png">
+<meta property="og:image" content="https://www.howtoforge.com/images/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/big/7.png">
+<meta property="og:image" content="https://www.howtoforge.com/images/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/big/8.png">
+<meta property="og:updated_time" content="2017-08-22T01:36:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于CentOS 6 搭建 NextCloud 网盘">
+<meta name="twitter:description" content="NextCoud 是一款开源（免费）软件，属于 OwnCloud的一个分支。NextCloud是基于PHP及Javascript开发，支持 MySQL/MariaDB, PostgreSQL, Oracle, SQLite等主流数据库。 与此同时，NextCloud提供了桌面版（Windows，Mac， Linux），手机版（IOS，Android）应用，极大了方便了用户的使用。 本文将主要介绍">
+<meta name="twitter:image" content="http://i1.bvimg.com/607816/a0080e4ca0a7af3b.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://missingeverytime.github.io/2017/08/22/基于CentOS-6-搭建-NextCloud-网盘/"/>
+
+
+
+
+
+  <title>基于CentOS 6 搭建 NextCloud 网盘 | Steven Li's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Steven Li's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">李高健的博客</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://missingeverytime.github.io/2017/08/22/基于CentOS-6-搭建-NextCloud-网盘/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Steven Li's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于CentOS 6 搭建 NextCloud 网盘</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-22T08:36:02+08:00">
+                2017-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>NextCoud 是一款开源（免费）软件，属于 OwnCloud的一个分支。NextCloud是基于<code>PHP</code>及<code>Javascript</code>开发，支持 <code>MySQL/MariaDB</code>, <code>PostgreSQL</code>, <code>Oracle</code>, <code>SQLite</code>等主流数据库。</p>
+<p>与此同时，NextCloud提供了桌面版（Windows，Mac， Linux），手机版（IOS，Android）应用，极大了方便了用户的使用。</p>
+<p>本文将主要介绍在 CentOS 6.* 环境下，安装 NextCloud 12。</p>
+<p>近期，在捣鼓一台CentOS服务器，在加上领导想在部门内部搭建一个类似网盘的工具软件，就自己做了一些调研，对比之后选择了NextCloud。网上好多教程都是基于CentOS 7的，相对来说坑会少一些，本文也参考了部分内容。</p>
+</blockquote>
+<h3 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h3><ol>
+<li>CentOS 6.*  64-bit</li>
+<li>Root权限</li>
+<li>PHP &gt; 7.0</li>
+<li>服务器：Nginx（👍），Apache（😒，试验过，太慢，放弃了）</li>
+</ol>
+<h3 id="安装Nginx-及-PHP7-FPM"><a href="#安装Nginx-及-PHP7-FPM" class="headerlink" title="安装Nginx 及 PHP7-FPM"></a>安装Nginx 及 PHP7-FPM</h3><blockquote>
+<p>网上大部分教程使用的都是Apache，我自己也试过（真的慢），但在用Nginx后，使用体验提升了一个档次。</p>
+</blockquote>
+<p>在安装之前，须添加<code>EPEL</code>的Repo</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum -y install epel-release</div></pre></td></tr></table></figure>
+<p>安装 Nginx</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum -y install nginx</div></pre></td></tr></table></figure>
+<p>安装PHP7-FPM</p>
+<p>如果之前安装过PHP，请检查PHP的版本：<code>php -v</code> ，也可以卸载之前的版本：<code>yum remove php* php-common</code></p>
+<p>添加PHP7的yum源：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm</div></pre></td></tr></table></figure>
+<p>修正yum源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi /etc/yum.repos.d/remi.repo</div></pre></td></tr></table></figure>
+<p>将<code>remi</code>段中的<code>enabled=0</code>改为<code>enabled=1</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/yum.repos.d/remi-php70.repo</div></pre></td></tr></table></figure>
+<p>与remi.repo类似，将<code>remi-php70</code>段中的<code>enabled=0</code>改为<code>enabled=1</code>。</p>
+<p>扫行命令查看版本如果显示的是<code>7.x</code>的话 那就没问题</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum list php</div></pre></td></tr></table></figure>
+<p>接下来，安装PHP7-FPM以及PHP附加组件：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum -y install php-fpm php-cli php-gd php-mcrypt php-mysql php-pear php-xml php-mbstring php-pdo php-json</div></pre></td></tr></table></figure>
+<p>最后，检查PHP的版本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">php -v</div></pre></td></tr></table></figure>
+<p><img src="http://i1.bvimg.com/607816/a0080e4ca0a7af3b.png" alt="Markdown"></p>
+<h3 id="配置-PHP7-FPM"><a href="#配置-PHP7-FPM" class="headerlink" title="配置 PHP7-FPM"></a>配置 PHP7-FPM</h3><p>接下来配置PHP7-FPM，使其以nginx用户运行，并监听 <code>9000</code>端口。</p>
+<ul>
+<li><p>修改配置文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/php-fpm.d/www.conf</div></pre></td></tr></table></figure>
+<ol>
+<li><p>修改用户及组，改为 nginx</p>
+<p><img src="http://i1.bvimg.com/607816/f83162a260988362.png" alt="Markdown"></p>
+</li>
+<li><p>确认PHP-FPM监听<code>9000</code>端口</p>
+<p><img src="http://i1.bvimg.com/607816/e37713755b4bde3e.png" alt="Markdown"></p>
+</li>
+<li><p>去除以下注释，激活PHP-FPM的系统环境变量</p>
+<p><img src="http://i1.bvimg.com/607816/c0174645fdb8e9ad.png" alt="Markdown"></p>
+</li>
+<li><p>保存，退出</p>
+</li>
+<li><p>在<code>/var/lib</code>目录下为php的session创建文件夹，并将所有者设置为<code>nginx</code>。（目前，我也不知道这一步是做啥的）</p>
+</li>
+<li><p>启动nginx与php-fpm</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">service nginx start</div><div class="line">service php-fpm start</div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="安装-MariaDB"><a href="#安装-MariaDB" class="headerlink" title="安装 MariaDB"></a>安装 MariaDB</h3><ol>
+<li><p>添加MariaDB 源，在创建<code>MariaDB.repo</code>，文件内容可以参考：<a href="https://mariadb.com/kb/en/mariadb/yum/" target="_blank" rel="external">link</a>，但是对于400多MB的文件来说，7，8K的速度也是怪可怜的。以下是一个国内镜像服务器的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[mariadb]</div><div class="line">name = MariaDB</div><div class="line">baseurl = http://mirrors.ctyun.cn/MariaDB/yum/10.1/centos6-amd64</div><div class="line">gpgkey=http://mirrors.ctyun.cn/MariaDB/yum/RPM-GPG-KEY-MariaDB</div><div class="line">gpgcheck=1</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install MariaDB-server MariaDB-client</div></pre></td></tr></table></figure>
+</li>
+<li><p>启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /etc/init.d/mysql start</div></pre></td></tr></table></figure>
+</li>
+<li><p>配置MariaDB</p>
+<ul>
+<li>数据库设置</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">[MariaDB Secure installation]</div><div class="line">$ sudo mysql_secure_installation</div><div class="line"></div><div class="line">NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB</div><div class="line">      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!</div><div class="line"></div><div class="line">Enter current password <span class="keyword">for</span> root (enter <span class="keyword">for</span> none): Press Enter</div><div class="line">OK, successfully used password, moving on...</div><div class="line"></div><div class="line">Set root password? [Y/n] y</div><div class="line">New password:</div><div class="line">Re-enter new password:</div><div class="line">Password updated successfully!</div><div class="line">Reloading privilege tables..</div><div class="line"> ... Success!</div><div class="line"></div><div class="line">Remove anonymous users? [Y/n] y</div><div class="line"> ... Success!</div><div class="line"></div><div class="line">Disallow root login remotely? [Y/n] y</div><div class="line"> ... Success!</div><div class="line"></div><div class="line">Remove <span class="built_in">test</span> database and access to it? [Y/n] y</div><div class="line"> - Dropping <span class="built_in">test</span> database...</div><div class="line"> ... Success!</div><div class="line"> - Removing privileges on <span class="built_in">test</span> database...</div><div class="line"> ... Success!</div><div class="line"></div><div class="line">Reload privilege tables now? [Y/n] y</div><div class="line"> ... Success!</div><div class="line"></div><div class="line">Cleaning up...</div><div class="line"></div><div class="line">All <span class="keyword">done</span>!  If you<span class="string">'ve completed all of the above steps, your MariaDB</span></div><div class="line"><span class="string">installation should now be secure.</span></div><div class="line"><span class="string"></span></div><div class="line"><span class="string">Thanks for using MariaDB!</span></div></pre></td></tr></table></figure>
+<ul>
+<li>数据初始化</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$ sudo mysql -u root -p</div><div class="line">Enter password: ******</div><div class="line"></div><div class="line">MariaDB [(none)]&gt; create database nextcloud_db;</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line"></div><div class="line">MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON nextcloud_db.* TO 'nextcloud_user'@'localhost' IDENTIFIED BY '12345';</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div><div class="line"></div><div class="line">MariaDB [(none)]&gt; FLUSH PRIVILEGES;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [(none)]&gt; exit</div><div class="line">Bye</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="安装-SSL-证书文件"><a href="#安装-SSL-证书文件" class="headerlink" title="安装 SSL 证书文件"></a>安装 SSL 证书文件</h3><p>（个人认为，此步可选）可以参考：<a href="https://www.howtoforge.com/tutorial/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/" target="_blank" rel="external">这篇文章</a>中的<code>Step4</code></p>
+<h3 id="下载和安装-NextCloud"><a href="#下载和安装-NextCloud" class="headerlink" title="下载和安装 NextCloud"></a>下载和安装 NextCloud</h3><ol>
+<li><p>访问以下网址：<a href="https://nextcloud.com/install/" target="_blank" rel="external">Nextcloud</a>，点击<code>Download</code>下载代码文件。</p>
+</li>
+<li><p>解压文件，并移动到 <code>/usr/share/nginx/html/</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">unzip nextcloud-10.0.2.zip</div><div class="line">mv nextcloud/ /usr/share/nginx/html/</div></pre></td></tr></table></figure>
+</li>
+<li><p>移动到 nginx web应用的根目录：<code>//usr/share/nginx/html/</code>，创建 <code>/data</code>文件夹，并将文件夹权限设置为<code>nginx:nginx</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> /usr/share/nginx/html/</div><div class="line">mkdir -p nextcloud/data/</div><div class="line">chown nginx:nginx -R nextcloud/</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="配置Nginx-amp-SELinux"><a href="#配置Nginx-amp-SELinux" class="headerlink" title="配置Nginx &amp; SELinux"></a>配置Nginx &amp; SELinux</h3><ol>
+<li><p>进入 <code>/etc/nginx/conf.d/</code>，创建文件<code>nextcloud.conf</code>，并写入以下内容。</p>
+<p>(注：这里nextCloud 官网有关于 nginx的配置文档，在试验过程中，加入了SSL证书，发现一些小问题，特别是所有请求强制转发到 <code>Https</code>，一直有问题。在一顿Google之后，终于可以跳转了。)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div></pre></td><td class="code"><pre><div class="line">upstream php-handler &#123;</div><div class="line">    server 127.0.0.1:9000;</div><div class="line">&#125;</div><div class="line"></div><div class="line">server &#123;</div><div class="line">    listen 80 default_server;</div><div class="line">    listen [::]:80 default_server;</div><div class="line">    server_name _;</div><div class="line">    # enforce https</div><div class="line">    return 301 https://$host$request_uri;</div><div class="line">&#125;</div><div class="line"></div><div class="line">server &#123;</div><div class="line">    listen 443 ssl;</div><div class="line">    server_name cloud.example.com;</div><div class="line"></div><div class="line">    ssl_certificate /etc/nginx/cert/nextcloud.crt;</div><div class="line">    ssl_certificate_key /etc/nginx/cert/nextcloud.key;</div><div class="line"></div><div class="line">    # Add headers to serve security related headers</div><div class="line">    # Before enabling Strict-Transport-Security headers please read into this</div><div class="line">    # topic first.</div><div class="line">    add_header Strict-Transport-Security max-age=15768000;</div><div class="line">    # includeSubDomains; preload;&quot;;</div><div class="line">    add_header X-Content-Type-Options nosniff;</div><div class="line">    add_header X-XSS-Protection &quot;1; mode=block&quot;;</div><div class="line">    add_header X-Robots-Tag none;</div><div class="line">    add_header X-Download-Options noopen;</div><div class="line">    add_header X-Permitted-Cross-Domain-Policies none;</div><div class="line"></div><div class="line">    # Path to the root of your installation</div><div class="line">    root /usr/share/nginx/html/;</div><div class="line"></div><div class="line">    location = /robots.txt &#123;</div><div class="line">        allow all;</div><div class="line">        log_not_found off;</div><div class="line">        access_log off;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    # The following 2 rules are only needed for the user_webfinger app.</div><div class="line">    # Uncomment it if you&apos;re planning to use this app.</div><div class="line">    # rewrite ^/.well-known/host-meta /nextcloud/public.php?service=host-meta</div><div class="line">    # last;</div><div class="line">    #rewrite ^/.well-known/host-meta.json</div><div class="line">    # /nextcloud/public.php?service=host-meta-json last;</div><div class="line"></div><div class="line">    location = /.well-known/carddav &#123;</div><div class="line">      return 301 $scheme://$host/nextcloud/remote.php/dav;</div><div class="line">    &#125;</div><div class="line">    location = /.well-known/caldav &#123;</div><div class="line">      return 301 $scheme://$host/nextcloud/remote.php/dav;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    location /.well-known/acme-challenge &#123; &#125;</div><div class="line"></div><div class="line">    location ^~ /nextcloud &#123;</div><div class="line"></div><div class="line">        # set max upload size</div><div class="line">        client_max_body_size 512M;</div><div class="line">        fastcgi_buffers 64 4K;</div><div class="line"></div><div class="line">        # Enable gzip but do not remove ETag headers</div><div class="line">        gzip on;</div><div class="line">        gzip_vary on;</div><div class="line">        gzip_comp_level 4;</div><div class="line">        gzip_min_length 256;</div><div class="line">        gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;</div><div class="line">        gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/bmp image/svg+xml image/x-icon text/cache-manifest text/css text/plain text/vcard text/vnd.rim.location.xloc text/vtt text/x-component text/x-cross-domain-policy;</div><div class="line"></div><div class="line">        # Uncomment if your server is build with the ngx_pagespeed module</div><div class="line">        # This module is currently not supported.</div><div class="line">        #pagespeed off;</div><div class="line"></div><div class="line">        location /nextcloud &#123;</div><div class="line">            rewrite ^ /nextcloud/index.php$uri;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)/ &#123;</div><div class="line">            deny all;</div><div class="line">        &#125;</div><div class="line">        location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console) &#123;</div><div class="line">            deny all;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        location ~ ^/nextcloud/(?:index|remote|public|cron|core/ajax/update|status|ocs/v[12]|updater/.+|ocs-provider/.+)\.php(?:$|/) &#123;</div><div class="line">            fastcgi_split_path_info ^(.+\.php)(/.*)$;</div><div class="line">            include fastcgi_params;</div><div class="line">            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</div><div class="line">            fastcgi_param PATH_INFO $fastcgi_path_info;</div><div class="line">            fastcgi_param HTTPS on;</div><div class="line">            #Avoid sending the security headers twice</div><div class="line">            fastcgi_param modHeadersAvailable true;</div><div class="line">            fastcgi_param front_controller_active true;</div><div class="line">            fastcgi_pass php-handler;</div><div class="line">            fastcgi_intercept_errors on;</div><div class="line">            fastcgi_request_buffering off;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        location ~ ^/nextcloud/(?:updater|ocs-provider)(?:$|/) &#123;</div><div class="line">            try_files $uri/ =404;</div><div class="line">            index index.php;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        # Adding the cache control header for js and css files</div><div class="line">        # Make sure it is BELOW the PHP block</div><div class="line">        location ~ \.(?:css|js|woff|svg|gif)$ &#123;</div><div class="line">            try_files $uri /nextcloud/index.php$uri$is_args$args;</div><div class="line">            add_header Cache-Control &quot;public, max-age=15778463&quot;;</div><div class="line">            # Add headers to serve security related headers  (It is intended</div><div class="line">            # to have those duplicated to the ones above)</div><div class="line">            # Before enabling Strict-Transport-Security headers please read</div><div class="line">            # into this topic first.</div><div class="line">            add_header Strict-Transport-Security &quot;max-age=15768000;</div><div class="line">            # includeSubDomains; preload;&quot;;</div><div class="line">            add_header X-Content-Type-Options nosniff;</div><div class="line">            add_header X-XSS-Protection &quot;1; mode=block&quot;;</div><div class="line">            add_header X-Robots-Tag none;</div><div class="line">            add_header X-Download-Options noopen;</div><div class="line">            add_header X-Permitted-Cross-Domain-Policies none;</div><div class="line">            # Optional: Don&apos;t log access to assets</div><div class="line">            access_log off;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        location ~ \.(?:png|html|ttf|ico|jpg|jpeg)$ &#123;</div><div class="line">            try_files $uri /nextcloud/index.php$uri$is_args$args;</div><div class="line">            # Optional: Don&apos;t log access to other assets</div><div class="line">            access_log off;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>保存并退出，重启 nginx。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service nginx restart</div></pre></td></tr></table></figure>
+</li>
+<li><p>关于SELinux配置</p>
+<p>查看当前SELinux设置：<code>vim /etc/selinux/conf</code></p>
+<ul>
+<li><p>如果 SELINUX=<code>enforcing</code>，须运行以下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/data(/.*)?'</span></div><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/config(/.*)?'</span></div><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/apps(/.*)?'</span></div><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/assets(/.*)?'</span></div><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/.htaccess'</span></div><div class="line">semanage fcontext -a -t httpd_sys_rw_content_t <span class="string">'/usr/share/nginx/html/nextcloud/.user.ini'</span></div><div class="line"></div><div class="line">restorecon -Rv <span class="string">'/usr/share/nginx/html/nextcloud/'</span></div></pre></td></tr></table></figure>
+<p>这里需要注意的是：如果以后要修改云盘存储路径，同样需要修改SELinux配置。</p>
+</li>
+<li><p>如果 SELINUX=<code>disabled</code>，则无须设置。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="防火墙配置"><a href="#防火墙配置" class="headerlink" title="防火墙配置"></a>防火墙配置</h3><p>如需通过IP或域名访问，须设置防火墙。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT</div><div class="line">sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT</div><div class="line">sudo service iptables save</div></pre></td></tr></table></figure>
+<h3 id="NextCloud-安装配置"><a href="#NextCloud-安装配置" class="headerlink" title="NextCloud 安装配置"></a>NextCloud 安装配置</h3><p>用浏览器打开<code>https://[your_server_name]/nextcloud</code>，出现如下页面，恭喜你，说明以上配置成功。</p>
+<p><img src="https://www.howtoforge.com/images/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/big/7.png" alt="Main Page"></p>
+<p><code>Data folder</code>：默认为 <code>nextcloud/data</code>，亦可进行修改，但必须保证所设置的文件夹的所有者为<code>nginx:nginx</code>。</p>
+<p><code>MySQL／MariaDB</code>：请参考第3步中的设置参数。</p>
+<p>点击「Finish setup」，等待几十秒钟，如跳转到如下页面，则说明配置成功。</p>
+<p><img src="https://www.howtoforge.com/images/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/big/8.png" alt="dashboard"></p>
+<h3 id="写在后面的话"><a href="#写在后面的话" class="headerlink" title="写在后面的话"></a>写在后面的话</h3><p>无论是NextCloud，OwnCloud还是Seafile，这些软件都为我们搭建网盘提供了比较不错的解决方案，方法大同小异。</p>
+<p>近期，真的是掉入了Linux的海洋中，好多东西都是边实验边Google，文章中有不恰当的地方还请大家多多批评指正。</p>
+<p>参考文档就不一一列举了，大家都可以在Google中找到相关文章。</p>
+<ol>
+<li><a href="http://www.marksei.com/install-nextcloud-12-centos-7/" target="_blank" rel="external">How to install Nextcloud 12 server on CentOS 7</a></li>
+<li><a href="https://www.howtoforge.com/tutorial/how-to-install-nextcloud-with-nginx-and-php-fpm-on-centos-7/" target="_blank" rel="external">How to Install Nextcloud with Nginx and PHP7-FPM on CentOS 7</a></li>
+<li><a href="https://docs.nextcloud.com/server/12/admin_manual/installation" target="_blank" rel="external">NextCloud Install Guide</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Technology/" rel="tag"># Technology</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/16/functional_interface/" rel="next" title="【Java 8 学习笔记 (2)】 Functional Interface">
+                <i class="fa fa-chevron-left"></i> 【Java 8 学习笔记 (2)】 Functional Interface
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Steven Li" />
+          <p class="site-author-name" itemprop="name">Steven Li</p>
+           
+              <p class="site-description motion-element" itemprop="description">a not bad person</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建环境"><span class="nav-number">1.</span> <span class="nav-text">搭建环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Nginx-及-PHP7-FPM"><span class="nav-number">2.</span> <span class="nav-text">安装Nginx 及 PHP7-FPM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置-PHP7-FPM"><span class="nav-number">3.</span> <span class="nav-text">配置 PHP7-FPM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-MariaDB"><span class="nav-number">4.</span> <span class="nav-text">安装 MariaDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-SSL-证书文件"><span class="nav-number">5.</span> <span class="nav-text">安装 SSL 证书文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载和安装-NextCloud"><span class="nav-number">6.</span> <span class="nav-text">下载和安装 NextCloud</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Nginx-amp-SELinux"><span class="nav-number">7.</span> <span class="nav-text">配置Nginx & SELinux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防火墙配置"><span class="nav-number">8.</span> <span class="nav-text">防火墙配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NextCloud-安装配置"><span class="nav-number">9.</span> <span class="nav-text">NextCloud 安装配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写在后面的话"><span class="nav-number">10.</span> <span class="nav-text">写在后面的话</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Li</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

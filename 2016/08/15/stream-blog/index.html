@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="这段时间正好接触到Java8中的Stream，就想写点东西来简单记录下。">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Java 8 学习笔记 (1)】 Stream">
+<meta property="og:url" content="https://missingeverytime.github.io/2016/08/15/stream-blog/index.html">
+<meta property="og:site_name" content="Steven Li&#39;s Blog">
+<meta property="og:description" content="这段时间正好接触到Java8中的Stream，就想写点东西来简单记录下。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2017-08-02T07:28:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Java 8 学习笔记 (1)】 Stream">
+<meta name="twitter:description" content="这段时间正好接触到Java8中的Stream，就想写点东西来简单记录下。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://missingeverytime.github.io/2016/08/15/stream-blog/"/>
+
+
+
+
+
+  <title>【Java 8 学习笔记 (1)】 Stream | Steven Li's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Steven Li's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">李高健的博客</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://missingeverytime.github.io/2016/08/15/stream-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Steven Li's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【Java 8 学习笔记 (1)】 Stream</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-15T10:51:36+08:00">
+                2016-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Technology/" itemprop="url" rel="index">
+                    <span itemprop="name">Technology</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这段时间正好接触到Java8中的Stream，就想写点东西来简单记录下。<br><a id="more"></a><br>像我们学习其他知识一样，关于Stream，首先得弄清楚以下几点：</p>
+<ol>
+<li><strong><em>What</em></strong> - 它是个什么东西（类？接口？），它在哪个包下，关系背景又怎样（这是只是有没有继承关系）</li>
+<li><strong><em>Why</em></strong> - 为什么要用它，好处是什么…</li>
+<li><strong><em>How</em></strong> - 怎么使用其实就没那么难了</li>
+</ol>
+<p>接下来，就围绕上述问题来开始我们今天的讨论…论述如有不当之处，欢迎大家批评指正。</p>
+<h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>JDK文档有其的官方定义：</p>
+<blockquote>
+<p>A sequence of elements supporting sequential and parallel aggregate operations.</p>
+</blockquote>
+<p>官方这定义可谓精辟，首先，Stream代表的是一组有序的元素集合，然后支持串行和并行的聚集操作这一句要稍微解释下，这里的串行和并行指的是单任务和多任务去操作Stream（Stream的并行操作依赖于Java 7中引入的Fork/Join框架），从而加速处理过程，发挥多核处理器的优势。</p>
+<p>Stream接口位于java.util.stream, 并且继承于BaseStream（父亲）。在java.util.stream中，我们可以发现她的3个兄弟姐妹，例如，DoubleStream, IntStream, LongStream，这里就不详细介绍其家人了，其实就是针对double，int，long，3种类型的流做了一些方法的封装，完全是可以通过原生Stream实现的。 </p>
+<h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>任何一个新生的接口都有其存在价值和意义，Stream也不例外。几乎任何Java应用都不可避免的会用到创建及处理集合数据。首先我们来看下在数据库中，常见的处理集合的方式，例如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> <span class="keyword">name</span>, wechat_account, <span class="keyword">MAX</span>(money) </div><div class="line"><span class="keyword">FROM</span> tb_girls <span class="keyword">as</span> girl</div><div class="line"><span class="keyword">WHERE</span> girl.height &gt;= <span class="number">168</span></div></pre></td></tr></table></figure>
+<p>如上，我们需要找到其中身高168cm并且钱最多以上的MM，这里我们不需要写代码去实现查找Max的实现逻辑，只需要用<code>Max</code>与 <code>girl.height&gt;=168</code>表述我们需要的就可以了。</p>
+<p>那么问题来了，我们是否可以对Java中的集合（例如， <code>List&lt;Girl&gt;</code>）进行类似操作呢？这里简单说明一下，并不是说Java里通过集合的操作不能实现上述功能，而是在于能否使用类似的代码编写的形式。</p>
+<p>绕了一大圈，我们今天的主角Stream该登场了，它为Java的集合类提供了一种声明式的方式来操作数据。接下来我们再用一个例子来具体实现下，现已知一个Person的对象集合 allPersons，我们想要取出所有人中白富美的微信号，而且是按照资产数值由高到低排序：</p>
+<blockquote>
+<p><code>In Java 7 or lower</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">List&lt;Person&gt; allGirls = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="keyword">for</span>(Person p: allPersons)&#123;</div><div class="line">	<span class="keyword">if</span>(p.getGender() == Gender.FEMALE)&#123;</div><div class="line">		allGirls.add(p);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">Collections.sort(allGirls, <span class="keyword">new</span> Comparator()&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Person p1, Person p2)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> p1.getMoney().compareTo(p2.getMoney());</div><div class="line">	&#125;</div><div class="line">&#125;);</div><div class="line">List&lt;String&gt; whiteRichBeautiful = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="keyword">for</span>(Person p: allGirls)&#123;</div><div class="line">	whiteRichBeautiful.add(p.getWeChat());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>In Java 8 by using Stream</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">List&lt;String&gt; whiteRichBeautiful = allPersons.stream()</div><div class="line">	.filter(p -&gt; p.getGender() == Gender.FEMALE)</div><div class="line">	.sorted(comparing(Person::getMoney).reverse())</div><div class="line">	.map(Person::getWeChat())</div><div class="line">	.collect(Collectors.toList());</div></pre></td></tr></table></figure>
+<p>机智如我的你，是不是已经发现这种编码方式很简洁，当然它也很高效（这里的高效并不会做很详细的解释），这里我引用来自另一篇文章的解释：</p>
+<blockquote>
+<p>在对于一个 Stream 进行多次转换操作 (Intermediate 操作)，每次都对 Stream 的每个元素进行转换，而且是执行多次，这样时间复杂度就是 N（转换次数）个 for 循环里把所有操作都做掉的总和吗？其实不是这样的，转换操作都是 lazy 的，多个转换操作只会在 Terminal 操作的时候融合起来，一次循环完成。我们可以这样简单的理解，Stream 里有个操作函数的集合，每次转换操作就是把转换函数放入这个集合中，在 Terminal 操作的时候循环 Stream 对应的集合，然后对每个元素执行所有的函数。</p>
+</blockquote>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>目前为止，我们对Stream存在的原因和优点有个大致的理解。接下来来看看如何去创建及使用Stream。</p>
+<h3 id="创建Stream"><a href="#创建Stream" class="headerlink" title="创建Stream"></a>创建Stream</h3><p>这里还是只介绍2种最常见的创建方式：</p>
+<ol>
+<li>Stream的静态方法</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//方法1. Stream.of()</span></div><div class="line">Stream&lt;Integer&gt; integerStream = Stream.of(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>);</div><div class="line">Stream&lt;String&gt; stringStream = Stream.of(<span class="string">"Hello World"</span>);</div><div class="line"><span class="comment">//方法2. Stream.generator()</span></div><div class="line">Stream.generator(<span class="keyword">new</span> Supplier&lt;Double&gt;() &#123;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> Double <span class="title">get</span><span class="params">()</span> </span>&#123;</div><div class="line">			<span class="keyword">return</span> Math.random();</div><div class="line">  		&#125;</div><div class="line">&#125;);</div><div class="line">Stream.generate(() -&gt; Math.random());</div><div class="line">Stream.generate(Math::random);</div></pre></td></tr></table></figure>
+<p>   对于方法1，有2个重载方法；对于方法2，Stream则是通过给定的<code>Supplier</code>接口(这个接口会在后续的文章中给大家介绍)来创建，最后的2行代码只是使用了lambda表达式和方法引用来简化代码。</p>
+<ol>
+<li>Collection子类的stream()方法</li>
+</ol>
+<p>上文的例子中就演示了如何从<code>List&lt;Person&gt;</code>对象中通过<code>allPersons.stream()</code>获取其Stream对象。从<code>Collection</code>的源码中就可以找到 <code>stream()</code>方法的定义及实现（实现？？？ 对的，没错，当然这也是Java 8里新加的特性: Default Method, 所以它只需要定义在<code>Collection</code>中，而不需要在其每个子类中完成实现），该方法的返回值类型就是Stream<e>。</e></p>
+<h3 id="操作Stream"><a href="#操作Stream" class="headerlink" title="操作Stream"></a>操作Stream</h3><p>在一个Stream对象被创建之后，接下来就是对其进行数据操作。一个数据流（Stream pipeline）是由数据源，若干中间方法（intermediate operation），一个汇聚方法（terminal operation）组成.</p>
+<ul>
+<li><strong>中间方法</strong>（intermediate operation）主要作用是完成数据的映射/过滤/排序等操作（形象点说就像数据流从一个管道，流入下一个管道，但是请注意数据流在流经中间管道时候自身并不会发生变化，只是记录了每个管道所对应的操作），这些操作的返回值都是<code>Stream</code>, 这就为链式（声明式）操作提供了基础。常见的操作有：<code>filter()</code>,<code>map()</code>,<code>sorted()</code>,<code>distinct()</code>,<code>limit()</code>,<code>skip()</code></li>
+<li><strong>汇聚方法</strong>（terminal operation）主要作用则是真正去处理和操作 （traverse，这里实在想不出一个很合适的词来形容，）整个Stream，例如，计算总值，查找最大值，将处理之后Stream中的集合元素封装成新的集合返回。在terminal operation后，Stream pipeline将会被关闭。常见的操作有：<code>count()</code>,<code>foreach()</code>,<code>collect()</code>,<code>max()</code>,<code>allMatch()</code>,<code>anyMatch()</code></li>
+</ul>
+<p>上述各种函数名是不是与SQL中的某些函数有似曾相识的感觉呢，也很容易理解各个方法的作用，这里就不再一一赘述。此外，操作方法的参数与大家平时常见的也有所不同，就拿上面例子中filter的参数来说<code>p -&gt; p.getGender() == Gender.FEMALE</code>, 这个就是传说中的lambda表达式（请切记，lambda表达式只是一种表达方式，其本质实际上为一个函数式接口<code>Functional Interface</code>，它只是将这个接口的实现用lambda表达式的形式呈现出来），也是Java 8里一个添加的重要的特性。 可以看出，lambda表达式可以让我们更加灵活的去操作Stream，并且是我们的代码看上去更加简洁。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>本文旨在对Stream做一个入门介绍，涵盖了What，Why，How。当然，Stream所包含的东西远不止这些，建议大家有空还是去读一下官方文档。至此，相信大家也已经能够读懂之前查找白富美微信号的那段代码了吧。</p>
+<p>下一篇文章将讨论Java 8的另一个重要内容 - <strong>Functional Interface</strong></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li><a href="http://docs.oracle.com/javase/8/docs/api/index.html?java/util/stream/Stream.html" target="_blank" rel="external">JDK Doc</a></li>
+<li><a href="http://www.oracle.com/technetwork/articles/java/ma14-java-se-8-streams-2177646.html" target="_blank" rel="external">Processing Data with Java SE 8 Streams, Part 1</a> </li>
+<li><a href="http://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/" target="_blank" rel="external">Java 8 中的 Streams API 详解</a></li>
+<li><a href="http://ifeve.com/stream/" target="_blank" rel="external">Java8初体验（二）Stream语法详解</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/16/functional_interface/" rel="prev" title="【Java 8 学习笔记 (2)】 Functional Interface">
+                【Java 8 学习笔记 (2)】 Functional Interface <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Steven Li" />
+          <p class="site-author-name" itemprop="name">Steven Li</p>
+           
+              <p class="site-description motion-element" itemprop="description">a not bad person</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#What"><span class="nav-number">1.</span> <span class="nav-text">What</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why"><span class="nav-number">2.</span> <span class="nav-text">Why</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How"><span class="nav-number">3.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Stream"><span class="nav-number">3.1.</span> <span class="nav-text">创建Stream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作Stream"><span class="nav-number">3.2.</span> <span class="nav-text">操作Stream</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Li</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
